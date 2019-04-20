@@ -2,61 +2,78 @@ package com.example.nbaguessthescore;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
 
 public class TestingActivity extends AppCompatActivity
 {
-    private static final String TAG = "TestingActivity";
-    private UpcomingGameViewModel upGameViewModel;
+    Toolbar toolbar;
 
-    TextView txtView;
-    TextView txtView2;
+    private UpcomingGameViewModel upcomingGameViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testing);
-        final Toolbar toolbar = findViewById(R.id.toolbar);
 
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setTitle("Upcoming games");
+        toolbar.setSubtitle("Games today: ");
 
-        txtView = (TextView) findViewById(R.id.textView);
-        txtView2 = (TextView) toolbar.findViewById(R.id.textView2);
-        toolbar.setTitle("Upcoming gamesssssss");
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
-        upGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
-        upGameViewModel.init();
-        upGameViewModel.getNumOfUpGames().observe(this, new Observer<JSONRoot>()
+        upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
+        upcomingGameViewModel.init();
+        upcomingGameViewModel.getNumOfUpGames().observe(this, new Observer<JSONRoot>()
         {
             @Override
             public void onChanged(@Nullable JSONRoot jsonRoot)
             {
-                txtView.setText(txtView.getText() + " " + jsonRoot.getNumGames());
-
-                toolbar.setTitle(toolbar.getTitle() + " (" + jsonRoot.getNumGames() + ")");
+                toolbar.setSubtitle(toolbar.getSubtitle() + " " + jsonRoot.getNumGames());
             }
         });
-
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        String msg = " ";
+        switch (item.getItemId())
+        {
+            case R.id.refresh:
+
+                msg = "Refresh";
+                break;
+
+            case R.id.action_settings:
+
+                msg = "Settings";
+                break;
+
+            case R.id.logout:
+
+                msg = "Logout";
+                break;
+        }
+        Toast.makeText(this, msg + " checked", Toast.LENGTH_LONG).show();
+
+        return super.onOptionsItemSelected(item);
+    }
 }

@@ -15,11 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".TestingActivity"
-            android:label="Upcoming games"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".TestingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
