@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_upcominggame_list">UpcomingGames</string>
     <string name="title_upcominggame_detail">UpcomingGame Detail</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_testing">TestingActivity</string>
 </resources>
