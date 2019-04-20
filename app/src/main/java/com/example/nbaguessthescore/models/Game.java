@@ -3,10 +3,10 @@ package com.example.nbaguessthescore.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.time.Period;
-import java.util.List;
 
-public class Game
+public class Game implements Serializable
 {
     @SerializedName("seasonStageId")
     @Expose
@@ -26,11 +26,11 @@ public class Game
 
     @SerializedName("statusNum")
     @Expose
-    private Integer statusNum;
+    private int statusNum;
 
     @SerializedName("extendedStatusNum")
     @Expose
-    private Integer extendedStatusNum;
+    private int extendedStatusNum;
 
     @SerializedName("startTimeEastern")
     @Expose
@@ -60,107 +60,162 @@ public class Game
     @Expose
     private Period period;
 
-    public Integer getSeasonStageId() {
+    public Game(int seasonStageId,
+                String seasonYear,
+                String gameId,
+                Boolean isGameActivated,
+                int statusNum,
+                int extendedStatusNum,
+                String startTimeEastern,
+                String startTimeUTC,
+                String startDateEastern,
+                String clock,
+                Boolean isBuzzerBeater,
+                GameDuration gameDuration,
+                Period period)
+    {
+        this.seasonStageId = seasonStageId;
+        this.seasonYear = seasonYear;
+        this.gameId = gameId;
+        this.isGameActivated = isGameActivated;
+        this.statusNum = statusNum;
+        this.extendedStatusNum = extendedStatusNum;
+        this.startTimeEastern = startTimeEastern;
+        this.startTimeUTC = startTimeUTC;
+        this.startDateEastern = startDateEastern;
+        this.clock = clock;
+        this.isBuzzerBeater = isBuzzerBeater;
+        this.gameDuration = gameDuration;
+        this.period = period;
+    }
+
+    public int getSeasonStageId()
+    {
         return seasonStageId;
     }
 
-    public void setSeasonStageId(Integer seasonStageId) {
+    public void setSeasonStageId(int seasonStageId)
+    {
         this.seasonStageId = seasonStageId;
     }
 
-    public String getSeasonYear() {
+    public String getSeasonYear()
+    {
         return seasonYear;
     }
 
-    public void setSeasonYear(String seasonYear) {
+    public void setSeasonYear(String seasonYear)
+    {
         this.seasonYear = seasonYear;
     }
 
-    public String getGameId() {
+    public String getGameId()
+    {
         return gameId;
     }
 
-    public void setGameId(String gameId) {
+    public void setGameId(String gameId)
+    {
         this.gameId = gameId;
     }
 
-    public Boolean getIsGameActivated() {
+    public Boolean getIsGameActivated()
+    {
         return isGameActivated;
     }
 
-    public void setIsGameActivated(Boolean isGameActivated) {
+    public void setIsGameActivated(Boolean isGameActivated)
+    {
         this.isGameActivated = isGameActivated;
     }
 
-    public Integer getStatusNum() {
+    public int getStatusNum()
+    {
         return statusNum;
     }
 
-    public void setStatusNum(Integer statusNum) {
+    public void setStatusNum(int statusNum)
+    {
         this.statusNum = statusNum;
     }
 
-    public Integer getExtendedStatusNum() {
+    public int getExtendedStatusNum()
+    {
         return extendedStatusNum;
     }
 
-    public void setExtendedStatusNum(Integer extendedStatusNum) {
+    public void setExtendedStatusNum(int extendedStatusNum)
+    {
         this.extendedStatusNum = extendedStatusNum;
     }
 
-    public String getStartTimeEastern() {
+    public String getStartTimeEastern()
+    {
         return startTimeEastern;
     }
 
-    public void setStartTimeEastern(String startTimeEastern) {
+    public void setStartTimeEastern(String startTimeEastern)
+    {
         this.startTimeEastern = startTimeEastern;
     }
 
-    public String getStartTimeUTC() {
+    public String getStartTimeUTC()
+    {
         return startTimeUTC;
     }
 
-    public void setStartTimeUTC(String startTimeUTC) {
+    public void setStartTimeUTC(String startTimeUTC)
+    {
         this.startTimeUTC = startTimeUTC;
     }
 
-    public String getStartDateEastern() {
+    public String getStartDateEastern()
+    {
         return startDateEastern;
     }
 
-    public void setStartDateEastern(String startDateEastern) {
+    public void setStartDateEastern(String startDateEastern)
+    {
         this.startDateEastern = startDateEastern;
     }
 
-    public String getClock() {
+    public String getClock()
+    {
         return clock;
     }
 
-    public void setClock(String clock) {
+    public void setClock(String clock)
+    {
         this.clock = clock;
     }
 
-    public Boolean getIsBuzzerBeater() {
+    public Boolean getIsBuzzerBeater()
+    {
         return isBuzzerBeater;
     }
 
-    public void setIsBuzzerBeater(Boolean isBuzzerBeater) {
+    public void setIsBuzzerBeater(Boolean isBuzzerBeater)
+    {
         this.isBuzzerBeater = isBuzzerBeater;
     }
 
-    public GameDuration getGameDuration() {
+    public GameDuration getGameDuration()
+    {
         return gameDuration;
     }
 
-    public void setGameDuration(GameDuration gameDuration) {
+    public void setGameDuration(GameDuration gameDuration)
+    {
         this.gameDuration = gameDuration;
     }
 
-    public Period getPeriod() {
+    public Period getPeriod()
+    {
         return period;
     }
 
-    public void setPeriod(Period period) {
+    public void setPeriod(Period period)
+    {
         this.period = period;
     }
 }

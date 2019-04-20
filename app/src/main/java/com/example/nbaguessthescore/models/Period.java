@@ -3,19 +3,21 @@ package com.example.nbaguessthescore.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Period {
+import java.io.Serializable;
 
+public class Period implements Serializable
+{
     @SerializedName("current")
     @Expose
-    private Integer current;
+    private int current;
 
     @SerializedName("type")
     @Expose
-    private Integer type;
+    private int type;
 
     @SerializedName("maxRegular")
     @Expose
-    private Integer maxRegular;
+    private int maxRegular;
 
     @SerializedName("isHalftime")
     @Expose
@@ -25,43 +27,53 @@ public class Period {
     @Expose
     private Boolean isEndOfPeriod;
 
-    public Integer getCurrent() {
+    public int getCurrent()
+    {
         return current;
     }
 
-    public void setCurrent(Integer current) {
+    public void setCurrent(int current)
+    {
         this.current = current;
     }
 
-    public Integer getType() {
+    public int getType()
+    {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(int type)
+    {
         this.type = type;
     }
 
-    public Integer getMaxRegular() {
+    public int getMaxRegular()
+    {
         return maxRegular;
     }
 
-    public void setMaxRegular(Integer maxRegular) {
+    public void setMaxRegular(int maxRegular)
+    {
         this.maxRegular = maxRegular;
     }
 
-    public Boolean getIsHalftime() {
+    public Boolean getIsHalftime()
+    {
         return isHalftime;
     }
 
-    public void setIsHalftime(Boolean isHalftime) {
+    public void setIsHalftime(Boolean isHalftime)
+    {
         this.isHalftime = isHalftime;
     }
 
-    public Boolean getIsEndOfPeriod() {
+    public Boolean getIsEndOfPeriod()
+    {
         return isEndOfPeriod;
     }
 
-    public void setIsEndOfPeriod(Boolean isEndOfPeriod) {
+    public void setIsEndOfPeriod(Boolean isEndOfPeriod)
+    {
         this.isEndOfPeriod = isEndOfPeriod;
     }
 }

@@ -13,19 +13,23 @@ public class GameDuration
     @Expose
     private String minutes;
 
-    public String getHours() {
+    public String getHours()
+    {
         return hours;
     }
 
-    public void setHours(String hours) {
+    public void setHours(String hours)
+    {
         this.hours = hours;
     }
 
-    public String getMinutes() {
+    public String getMinutes()
+    {
         return minutes;
     }
 
-    public void setMinutes(String minutes) {
+    public void setMinutes(String minutes)
+    {
         this.minutes = minutes;
     }
 }
