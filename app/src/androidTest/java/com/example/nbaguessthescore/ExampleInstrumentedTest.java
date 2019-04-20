@@ -1,4 +1,4 @@
-package com.example.nbaguessthegamescore;
+package com.example.nbaguessthescore;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.nbaguessthegamescore", appContext.getPackageName());
+        assertEquals("com.example.nbaguessthescore", appContext.getPackageName());
     }
 }

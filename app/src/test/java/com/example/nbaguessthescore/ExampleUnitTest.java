@@ -1,4 +1,4 @@
-package com.example.nbaguessthegamescore;
+package com.example.nbaguessthescore;
 
 import org.junit.Test;
 

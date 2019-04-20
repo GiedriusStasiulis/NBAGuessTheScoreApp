@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">NBAGuessTheGameScore</string>
+    <string name="app_name">NBAGuessTheScore</string>
+    <string name="action_settings">Settings</string>
 </resources>
