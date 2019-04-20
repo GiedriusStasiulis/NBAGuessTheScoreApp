@@ -70,8 +70,6 @@ public class TestingActivity extends AppCompatActivity
                 }
             }
         });
-
-
     }
 
     @Override
