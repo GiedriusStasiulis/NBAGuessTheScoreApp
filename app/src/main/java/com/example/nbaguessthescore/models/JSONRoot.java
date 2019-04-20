@@ -16,14 +16,14 @@ public class JSONRoot implements Serializable
     @Expose
     private List<Game> games = null;
 
+    public JSONRoot(int numGames)
+    {
+        this.numGames = numGames;
+    }
+
     public int getNumGames()
     {
         return numGames;
-    }
-
-    public void setNumGames(int numGames)
-    {
-        this.numGames = numGames;
     }
 
     public List<Game> getGames()
