@@ -3,17 +3,29 @@ package com.example.nbaguessthescore.viewmodels;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.repositories.GameRepository;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class UpcomingGameViewModel extends ViewModel
 {
     private LiveData<JSONRoot> jsonRoot;
     private GameRepository gameRepo;
     private MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
+    private MutableLiveData<String> displayDate = new MutableLiveData<>();
+    private MutableLiveData<String> displayDayName = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isDateToday = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isDateTomorrow = new MutableLiveData<>();
 
     public void init()
     {
@@ -77,4 +89,108 @@ public class UpcomingGameViewModel extends ViewModel
 
         return jsonRoot;
     }
+
+    public MutableLiveData<String> getCurrentDate()
+    {
+        Date date = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        String fDate = sdf.format(date);
+        displayDate.setValue(fDate);
+
+        return displayDate;
+    }
+
+    public MutableLiveData<Boolean> getIsDateToday() throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        Date date = sdf.parse(displayDate.getValue());
+
+        if(DateUtils.isToday(date.getTime()))
+        {
+            isDateToday.setValue(true);
+        }
+        else
+        {
+            isDateToday.setValue(false);
+        }
+
+        return isDateToday;
+    }
+
+    public MutableLiveData<Boolean> getIsDateTomorrow() throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        Date date = sdf.parse(displayDate.getValue());
+
+        if(DateUtils.isToday(date.getTime() - DateUtils.DAY_IN_MILLIS))
+        {
+            isDateTomorrow.setValue(true);
+        }
+        else
+        {
+            isDateTomorrow.setValue(false);
+        }
+
+        return isDateTomorrow;
+    }
+
+    public MutableLiveData<String> setDateDayName() throws ParseException
+    {
+        String dayName = "";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        Date date = sdf.parse(displayDate.getValue());
+
+        if(getIsDateToday().getValue())
+        {
+            dayName = "Today";
+            displayDayName.setValue(dayName);
+        }
+        else if(getIsDateTomorrow().getValue())
+        {
+            dayName = "Tomorrow";
+            displayDayName.setValue(dayName);
+        }
+
+        else
+        {
+            SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
+            dayName = outFormat.format(date);
+            displayDayName.setValue(dayName);
+        }
+
+        return displayDayName;
+    }
+
+    public void incrementDisplayDate() throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        Calendar cal = Calendar.getInstance();
+        Date date = sdf.parse(displayDate.getValue());
+        cal.setTime(date);
+        cal.add(Calendar.DATE, 1);
+
+        Date newDate = cal.getTime();
+        String fDate = sdf.format(newDate);
+        displayDate.setValue(fDate);
+
+        setDateDayName();
+    }
+
+    public void descrementDisplayDate() throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        Calendar cal = Calendar.getInstance();
+        Date date = sdf.parse(displayDate.getValue());
+        cal.setTime(date);
+        cal.add(Calendar.DATE, -1);
+
+        Date newDate = cal.getTime();
+        String fDate = sdf.format(newDate);
+        displayDate.setValue(fDate);
+
+        setDateDayName();
+    }
+
+
 }

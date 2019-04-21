@@ -3,4 +3,5 @@
     <color name="colorPrimary">#1E318F</color>
     <color name="colorPrimaryDark">#010A4E</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorDatePicker">#BEBEBE</color>
 </resources>

@@ -12,18 +12,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
 
+import java.text.ParseException;
+
 public class TestingActivity extends AppCompatActivity
 {
     Toolbar toolbar;
+    Toolbar dateSelToolbar;
     ProgressBar prBar;
     Animation animation;
+    TextView dayName;
+    TextView selDate;
+    TextView numGames;
+    Button dateNextBtn;
+    Button dateBackBtn;
 
     private UpcomingGameViewModel upcomingGameViewModel;
 
@@ -40,15 +50,23 @@ public class TestingActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Upcoming games");
 
+        dateSelToolbar = findViewById(R.id.dateScrollToolbar);
+        dayName = findViewById(R.id.dayNameTextView);
+        selDate = findViewById(R.id.selDateTextView);
+        numGames = findViewById(R.id.numGamesTextView);
+
+        dateNextBtn = findViewById(R.id.selDateForward);
+        dateBackBtn = findViewById(R.id.selDateBackwards);
+
         upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
         upcomingGameViewModel.init();
+
         upcomingGameViewModel.getNumOfUpGames().observe(this, new Observer<JSONRoot>()
         {
             @Override
             public void onChanged(@Nullable JSONRoot jsonRoot)
             {
-                toolbar.setSubtitle("");
-                toolbar.setSubtitle("Games today: " + jsonRoot.getNumGames());
+
             }
         });
 
@@ -70,6 +88,87 @@ public class TestingActivity extends AppCompatActivity
                 }
             }
         });
+
+        upcomingGameViewModel.getCurrentDate().observe(this, new Observer<String>()
+        {
+            @Override
+            public void onChanged(@Nullable String s)
+            {
+                selDate.setText(s);
+            }
+        });
+
+        try
+        {
+            upcomingGameViewModel.setDateDayName().observe(this, new Observer<String>() {
+                @Override
+                public void onChanged(@Nullable String s)
+                {
+                    dayName.setText(s);
+                }
+            });
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+
+        dateNextBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                try
+                {
+                    upcomingGameViewModel.incrementDisplayDate();
+                }
+                catch (ParseException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        dateBackBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                try
+                {
+                    upcomingGameViewModel.descrementDisplayDate();
+                }
+                catch (ParseException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        try
+        {
+            upcomingGameViewModel.getIsDateToday().observe(this, new Observer<Boolean>()
+            {
+                @Override
+                public void onChanged(@Nullable Boolean aBoolean)
+                {
+                    if(aBoolean == true)
+                    {
+                        dateBackBtn.setClickable(false);
+                        dateBackBtn.setAlpha(0.5F);
+                    }
+                    else
+                    {
+                        dateBackBtn.setClickable(true);
+                        dateBackBtn.setAlpha(1);
+                    }
+                }
+            });
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -82,7 +181,7 @@ public class TestingActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        String msg = " ";
+        String msg = "";
         switch (item.getItemId())
         {
             case R.id.refresh:
