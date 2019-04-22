@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder>
 {
-    ArrayList<Game> mGames;
-    final private OnListItemClickListener mOnListItemClickListener;
+    private ArrayList<Game> mGames;
+    private IUpGameOnClickListener mUpGameOnClickListener;
 
-    public UpGameAdapter(ArrayList<Game> games, OnListItemClickListener listener)
+    public UpGameAdapter(ArrayList<Game> games, IUpGameOnClickListener upGameOnClickListener)
     {
-        mGames = games;
-        mOnListItemClickListener = listener;
+        this.mGames = games;
+        this.mUpGameOnClickListener = upGameOnClickListener;
     }
 
     @NonNull
@@ -29,7 +29,7 @@ public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.layout_upgame_item, parent,false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view, mUpGameOnClickListener);
     }
 
     @Override
@@ -47,23 +47,28 @@ public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         TextView gameText;
+        IUpGameOnClickListener upGameOnClickListener;
 
-        public ViewHolder(@NonNull View itemView)
+        public ViewHolder(@NonNull View itemView, IUpGameOnClickListener upGameOnClickListener)
         {
             super(itemView);
             gameText = itemView.findViewById(R.id.gameText);
+
+            this.upGameOnClickListener = upGameOnClickListener;
+
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v)
         {
-            mOnListItemClickListener.onListItemClick(getAdapterPosition());
+            upGameOnClickListener.onUpGameClick(getAdapterPosition());
         }
     }
 
-    public interface OnListItemClickListener
+    //OnClickListener interface
+    public interface IUpGameOnClickListener
     {
-        void onListItemClick(int clickedItemIndex);
+        void onUpGameClick(int position);
     }
 }

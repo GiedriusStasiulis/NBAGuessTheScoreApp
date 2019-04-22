@@ -1,7 +1,8 @@
-package com.example.nbaguessthescore;
+package com.example.nbaguessthescore.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,8 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.nbaguessthescore.adapters.OnListItemClickListener;
+import com.example.nbaguessthescore.R;
 import com.example.nbaguessthescore.adapters.UpGameAdapter;
+import com.example.nbaguessthescore.detail_activities.GuessActivity;
 import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
@@ -30,8 +32,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
-public class TestingActivity extends AppCompatActivity implements UpGameAdapter.OnListItemClickListener
+public class TestingActivity extends AppCompatActivity implements UpGameAdapter.IUpGameOnClickListener
 {
+    private static final String TAG = "TestingActivity";
+
     private Toolbar toolbar;
     private Toolbar dateSelToolbar;
     private ProgressBar prBar;
@@ -271,9 +275,12 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
     }
 
     @Override
-    public void onListItemClick(int clickedItemIndex)
+    public void onUpGameClick(int position)
     {
-            int upGameNumber = clickedItemIndex + 1;
-            Toast.makeText(this, "UpGame number: " + upGameNumber, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onUpGameClick: clicked");
+
+        Intent intentToGuessAct = new Intent(this, GuessActivity.class);
+        intentToGuessAct.putExtra("GameID", games.get(position).getGameId());
+        startActivity(intentToGuessAct);
     }
 }

@@ -3,7 +3,9 @@ package com.example.nbaguessthescore.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GameDuration
+import java.io.Serializable;
+
+public class GameDuration implements Serializable
 {
     @SerializedName("hours")
     @Expose
