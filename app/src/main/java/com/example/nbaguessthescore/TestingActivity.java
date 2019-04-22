@@ -59,30 +59,35 @@ public class TestingActivity extends AppCompatActivity
         dayName = findViewById(R.id.dayNameTextView);
         selDate = findViewById(R.id.selDateTextView);
         numGames = findViewById(R.id.numGamesTextView);
-
         dateNextBtn = findViewById(R.id.selDateForward);
         dateBackBtn = findViewById(R.id.selDateBackwards);
 
-
         upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
-        try {
+
+        try
+        {
             upcomingGameViewModel.init();
-        } catch (ParseException e) {
+        }
+        catch (ParseException e)
+        {
             e.printStackTrace();
         }
 
-        try {
+        try
+        {
             upcomingGameViewModel.getUpcomingGames().observe(this, new Observer<JSONRoot>()
             {
                 @Override
                 public void onChanged(@Nullable JSONRoot jsonRoot)
                 {
                     assert jsonRoot != null;
-                    numGames.setText("");
+                    numGames.clearComposingText();
                     numGames.setText(String.format(Locale.ENGLISH,"Games: %d", jsonRoot.getGamesArrList().size()));
                 }
             });
-        } catch (ParseException e) {
+        }
+        catch (ParseException e)
+        {
             e.printStackTrace();
         }
 
@@ -128,8 +133,6 @@ public class TestingActivity extends AppCompatActivity
                 }
             }
         });
-
-
 
         dateNextBtn.setOnClickListener(new View.OnClickListener()
         {
