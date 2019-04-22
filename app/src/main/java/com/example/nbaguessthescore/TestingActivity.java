@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -13,38 +15,43 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nbaguessthescore.adapters.UpGameAdapter;
 import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 public class TestingActivity extends AppCompatActivity
 {
-    Toolbar toolbar;
-    Toolbar dateSelToolbar;
-    ProgressBar prBar;
-    Animation animation;
-    TextView dayName;
-    TextView selDate;
-    TextView numGames;
-    Button dateNextBtn;
-    Button dateBackBtn;
+    private Toolbar toolbar;
+    private Toolbar dateSelToolbar;
+    private ProgressBar prBar;
+    private Animation animation;
+    private TextView dayName;
+    private TextView selDate;
+    private TextView numGames;
+    private Button dateNextBtn;
+    private Button dateBackBtn;
+
+    private RecyclerView upGameRView;
+    private RecyclerView.Adapter upGameAdapter;
 
     private UpcomingGameViewModel upcomingGameViewModel;
 
+    private JSONRoot jRoot = new JSONRoot();
+
+    ArrayList<Game> games = new ArrayList<>();
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testing);
 
@@ -81,8 +88,14 @@ public class TestingActivity extends AppCompatActivity
                 public void onChanged(@Nullable JSONRoot jsonRoot)
                 {
                     assert jsonRoot != null;
+                    jRoot = jsonRoot;
                     numGames.clearComposingText();
-                    numGames.setText(String.format(Locale.ENGLISH,"Games: %d", jsonRoot.getGamesArrList().size()));
+                    numGames.setText(String.format(Locale.ENGLISH,"Games: %d", jRoot.getGamesArrList().size()));
+
+                    games.clear();
+                    games.addAll(jsonRoot.getGamesArrList());
+
+                    upGameAdapter.notifyDataSetChanged();
                 }
             });
         }
@@ -190,7 +203,15 @@ public class TestingActivity extends AppCompatActivity
         {
             e.printStackTrace();
         }
+
+        upGameRView = findViewById(R.id.upGameRv);
+        upGameRView.hasFixedSize();
+        upGameRView.setLayoutManager(new LinearLayoutManager(this));
+
+        upGameAdapter = new UpGameAdapter(games);
+        upGameRView.setAdapter(upGameAdapter);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

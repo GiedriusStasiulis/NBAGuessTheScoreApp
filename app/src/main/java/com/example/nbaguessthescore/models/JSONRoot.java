@@ -13,7 +13,9 @@ public class JSONRoot implements Serializable
 
     @SerializedName("games")
     @Expose
-    private ArrayList<Game> gamesArrList;
+    private ArrayList<Game> gamesArrList = new ArrayList<>();
+
+    public JSONRoot(){}
 
     public JSONRoot(int _gamesCount, ArrayList<Game> _gamesArrList)
     {
@@ -23,7 +25,7 @@ public class JSONRoot implements Serializable
 
     public int getGamesCount()
     {
-        return gamesCount;
+        return gamesArrList.size();
     }
 
     public ArrayList<Game> getGamesArrList()
