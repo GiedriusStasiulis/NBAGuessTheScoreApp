@@ -13,11 +13,13 @@ import java.util.ArrayList;
 
 public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder>
 {
-    ArrayList<Game> mStrings;
+    ArrayList<Game> mGames;
+    final private OnListItemClickListener mOnListItemClickListener;
 
-    public UpGameAdapter(ArrayList<Game> strings)
+    public UpGameAdapter(ArrayList<Game> games, OnListItemClickListener listener)
     {
-        mStrings = strings;
+        mGames = games;
+        mOnListItemClickListener = listener;
     }
 
     @NonNull
@@ -33,17 +35,16 @@ public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position)
     {
-        viewHolder.gameText.setText(mStrings.get(position).getGameId());
+        viewHolder.gameText.setText(mGames.get(position).getGameId());
     }
 
     @Override
     public int getItemCount()
     {
-        //return mStrings.size();
-        return mStrings.size();
+        return mGames.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         TextView gameText;
 
@@ -51,6 +52,18 @@ public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder
         {
             super(itemView);
             gameText = itemView.findViewById(R.id.gameText);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v)
+        {
+            mOnListItemClickListener.onListItemClick(getAdapterPosition());
+        }
+    }
+
+    public interface OnListItemClickListener
+    {
+        void onListItemClick(int clickedItemIndex);
     }
 }

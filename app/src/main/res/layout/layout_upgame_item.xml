@@ -12,7 +12,7 @@
         android:layout_weight="1"
         android:layout_marginTop="10dp"
         android:background="#C0C0C0"
-        android:text="TestText"
+        android:text="Text"
         android:textSize="25dp"/>
 
 </LinearLayout>

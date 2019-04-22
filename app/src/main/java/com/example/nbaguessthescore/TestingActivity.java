@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nbaguessthescore.adapters.OnListItemClickListener;
 import com.example.nbaguessthescore.adapters.UpGameAdapter;
 import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
-public class TestingActivity extends AppCompatActivity
+public class TestingActivity extends AppCompatActivity implements UpGameAdapter.OnListItemClickListener
 {
     private Toolbar toolbar;
     private Toolbar dateSelToolbar;
@@ -208,7 +209,7 @@ public class TestingActivity extends AppCompatActivity
         upGameRView.hasFixedSize();
         upGameRView.setLayoutManager(new LinearLayoutManager(this));
 
-        upGameAdapter = new UpGameAdapter(games);
+        upGameAdapter = new UpGameAdapter(games,this);
         upGameRView.setAdapter(upGameAdapter);
     }
 
@@ -267,5 +268,12 @@ public class TestingActivity extends AppCompatActivity
     {
         prBar.setVisibility(View.GONE);
         ((ProgressBar)findViewById(R.id.progressBar)).clearAnimation();
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex)
+    {
+            int upGameNumber = clickedItemIndex + 1;
+            Toast.makeText(this, "UpGame number: " + upGameNumber, Toast.LENGTH_SHORT).show();
     }
 }
