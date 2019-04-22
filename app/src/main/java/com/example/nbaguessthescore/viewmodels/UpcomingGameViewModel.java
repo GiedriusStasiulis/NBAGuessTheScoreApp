@@ -9,33 +9,51 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 
+import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.repositories.GameRepository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class UpcomingGameViewModel extends ViewModel
 {
-    private LiveData<JSONRoot> jsonRoot;
     private GameRepository gameRepo;
+
+    private LiveData<JSONRoot> upGameJsonRoot;
+
     private MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
     private MutableLiveData<String> displayDate = new MutableLiveData<>();
     private MutableLiveData<String> displayDayName = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDateToday = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDateTomorrow = new MutableLiveData<>();
 
-    public void init()
+    public void init() throws ParseException
     {
-        if(jsonRoot != null)
+        if(upGameJsonRoot != null)
         {
             return;
         }
-
         gameRepo = GameRepository.getInstance();
-        jsonRoot = gameRepo.getNumberOfUpcomingGames();
+        getCurrentDate();
+        upGameJsonRoot = gameRepo.getGamesFromRepo(1,getBaseUrl());
+    }
+
+    public LiveData<JSONRoot> getUpcomingGames() throws ParseException
+    {
+        if(upGameJsonRoot == null)
+        {
+            gameRepo = GameRepository.getInstance();
+            getCurrentDate();
+            upGameJsonRoot = gameRepo.getGamesFromRepo(1,getBaseUrl());
+        }
+        return upGameJsonRoot;
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -54,7 +72,7 @@ public class UpcomingGameViewModel extends ViewModel
             {
                 super.onPostExecute(aVoid);
                 gameRepo = GameRepository.getInstance();
-                jsonRoot = gameRepo.getNumberOfUpcomingGames();
+                //jsonRoot = gameRepo.getNumberOfUpcomingGames();
                 isRefreshing.postValue(false);
             }
 
@@ -79,20 +97,10 @@ public class UpcomingGameViewModel extends ViewModel
         return isRefreshing;
     }
 
-    public LiveData<JSONRoot> getNumOfUpGames()
-    {
-        if(jsonRoot == null)
-        {
-            gameRepo = GameRepository.getInstance();
-            jsonRoot = gameRepo.getNumberOfUpcomingGames();
-        }
-
-        return jsonRoot;
-    }
-
     public MutableLiveData<String> getCurrentDate()
     {
         Date date = Calendar.getInstance().getTime();
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         String fDate = sdf.format(date);
         displayDate.setValue(fDate);
@@ -117,7 +125,7 @@ public class UpcomingGameViewModel extends ViewModel
         return isDateToday;
     }
 
-    public MutableLiveData<Boolean> getIsDateTomorrow() throws ParseException
+    private MutableLiveData<Boolean> getIsDateTomorrow() throws ParseException
     {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         Date date = sdf.parse(displayDate.getValue());
@@ -133,6 +141,8 @@ public class UpcomingGameViewModel extends ViewModel
 
         return isDateTomorrow;
     }
+
+
 
     public MutableLiveData<String> setDateDayName() throws ParseException
     {
@@ -174,10 +184,12 @@ public class UpcomingGameViewModel extends ViewModel
         String fDate = sdf.format(newDate);
         displayDate.setValue(fDate);
 
+        gameRepo.getGamesFromRepo(1,getBaseUrl());
+
         setDateDayName();
     }
 
-    public void descrementDisplayDate() throws ParseException
+    public void decrementDisplayDate() throws ParseException
     {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         Calendar cal = Calendar.getInstance();
@@ -189,8 +201,19 @@ public class UpcomingGameViewModel extends ViewModel
         String fDate = sdf.format(newDate);
         displayDate.setValue(fDate);
 
+        gameRepo.getGamesFromRepo(1,getBaseUrl());
+
         setDateDayName();
     }
 
+    public String getBaseUrl() throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        Date date = sdf.parse(displayDate.getValue());
+        sdf = new SimpleDateFormat("yyyyMMdd");
+        String fDate = sdf.format(date);
+        String baseUrl = String.format("%s/scoreboard.json", fDate);
 
+        return baseUrl;
+    }
 }

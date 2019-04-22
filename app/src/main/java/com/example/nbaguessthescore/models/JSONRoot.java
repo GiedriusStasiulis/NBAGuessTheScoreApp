@@ -2,37 +2,32 @@ package com.example.nbaguessthescore.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 public class JSONRoot implements Serializable
 {
     @SerializedName("numGames")
     @Expose
-    private int numGames;
+    private int gamesCount;
 
     @SerializedName("games")
     @Expose
-    private List<Game> games = null;
+    private ArrayList<Game> gamesArrList;
 
-    public JSONRoot(int numGames)
+    public JSONRoot(int _gamesCount, ArrayList<Game> _gamesArrList)
     {
-        this.numGames = numGames;
+        this.gamesCount = _gamesCount;
+        this.gamesArrList = _gamesArrList;
     }
 
-    public int getNumGames()
+    public int getGamesCount()
     {
-        return numGames;
+        return gamesCount;
     }
 
-    public List<Game> getGames()
+    public ArrayList<Game> getGamesArrList()
     {
-        return games;
-    }
-
-    public void setGames(List<Game> games)
-    {
-        this.games = games;
+        return gamesArrList;
     }
 }

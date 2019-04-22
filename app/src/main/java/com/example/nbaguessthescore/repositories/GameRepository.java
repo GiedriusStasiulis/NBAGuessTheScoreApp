@@ -3,11 +3,12 @@ package com.example.nbaguessthescore.repositories;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
+import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.webclient.IRetrofitWebClient;
 import com.example.nbaguessthescore.webclient.RetrofitWebClient;
-
-import java.lang.invoke.MutableCallSite;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,9 +18,11 @@ public class GameRepository
 {
     private static GameRepository instance;
 
-    private JSONRoot jRoot;
+    private JSONRoot gameJsonRoot;
+    private final MutableLiveData<JSONRoot> upGameJsonData = new MutableLiveData<>();
 
-    final MutableLiveData<JSONRoot> data = new MutableLiveData<JSONRoot>();
+    private ArrayList<Game> allGamesArrList = new ArrayList<>();
+    private ArrayList<Game> upcomingGamesArrList = new ArrayList<>();
 
     public static GameRepository getInstance()
     {
@@ -30,39 +33,63 @@ public class GameRepository
         return instance;
     }
 
-    public MutableLiveData<JSONRoot> getNumberOfUpcomingGames()
+    public MutableLiveData<JSONRoot> getGamesFromRepo(final int statusNum, String baseUrl)
     {
         IRetrofitWebClient rfClient = RetrofitWebClient.getRetrofitClient().create(IRetrofitWebClient.class);
-        Call<JSONRoot> call = rfClient.getJsonRoot();
 
-        call.enqueue(new Callback<JSONRoot>()
+        switch(statusNum)
         {
-            @Override
-            public void onResponse(Call<JSONRoot> call, Response<JSONRoot> response)
-            {
-                response.body();
+            //Upcoming games
+            case 1:
 
-                if(response != null && response.isSuccessful())
+                Call<JSONRoot> call = rfClient.getJsonRoot(baseUrl);
+                call.enqueue(new Callback<JSONRoot>()
                 {
-                    Log.d("OnSuccess", "onResponse: " + response.toString());
+                    @Override
+                    public void onResponse(Call<JSONRoot> call, Response<JSONRoot> response)
+                    {
+                        response.body();
 
-                    int noGames = Integer.valueOf(response.body().getNumGames());
+                        if(response.isSuccessful())
+                        {
+                            assert response.body() != null;
 
-                    jRoot = new JSONRoot(noGames);
+                            allGamesArrList.clear();
+                            upcomingGamesArrList.clear();
+                            allGamesArrList = response.body().getGamesArrList();
 
-                    Log.d("OnSuccess", "onResponse: " + jRoot.toString());
+                            for(int i = 0; i < allGamesArrList.size(); i++)
+                            {
+                                if(allGamesArrList.get(i).getStatusNum() == statusNum)
+                                {
+                                    upcomingGamesArrList.add(allGamesArrList.get(i));
+                                }
+                            }
+                            gameJsonRoot = new JSONRoot(upcomingGamesArrList.size(),upcomingGamesArrList);
+                            upGameJsonData.setValue(gameJsonRoot);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<JSONRoot> call, Throwable t)
+                    {
+                        Log.e("OnFailure", "Failure: Sum ting wong: "  +  t.getMessage() + " , StackTrace: " + t.getLocalizedMessage());
+                    }
+                });
+                break;
 
-                    data.setValue(jRoot);
-                }
-            }
+            //Live games
+            case 2:
 
-            @Override
-            public void onFailure(Call<JSONRoot> call, Throwable t)
-            {
-                Log.e("OnFailure", "Failure: Sum ting wong: "  +  t.getMessage() + " , StackTrace: " + t.getLocalizedMessage());
-            }
-        });
+                break;
 
-        return data;
+            //Finished games
+            case 3:
+
+                break;
+
+                default:
+                    break;
+        }
+        return upGameJsonData;
     }
 }

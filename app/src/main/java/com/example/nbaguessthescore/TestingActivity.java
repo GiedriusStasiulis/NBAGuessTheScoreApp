@@ -18,10 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class TestingActivity extends AppCompatActivity
 {
@@ -48,7 +53,7 @@ public class TestingActivity extends AppCompatActivity
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Upcoming games");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Upcoming games");
 
         dateSelToolbar = findViewById(R.id.dateScrollToolbar);
         dayName = findViewById(R.id.dayNameTextView);
@@ -58,36 +63,28 @@ public class TestingActivity extends AppCompatActivity
         dateNextBtn = findViewById(R.id.selDateForward);
         dateBackBtn = findViewById(R.id.selDateBackwards);
 
+
         upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
-        upcomingGameViewModel.init();
+        try {
+            upcomingGameViewModel.init();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        upcomingGameViewModel.getNumOfUpGames().observe(this, new Observer<JSONRoot>()
-        {
-            @Override
-            public void onChanged(@Nullable JSONRoot jsonRoot)
+        try {
+            upcomingGameViewModel.getUpcomingGames().observe(this, new Observer<JSONRoot>()
             {
-
-            }
-        });
-
-        upcomingGameViewModel.getIsRefreshing().observe(this, new Observer<Boolean>()
-        {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean)
-            {
-                if(aBoolean)
+                @Override
+                public void onChanged(@Nullable JSONRoot jsonRoot)
                 {
-                   Log.d("OnSuccess", "Progress bar starting!");
-                   showProgressBar();
+                    assert jsonRoot != null;
+                    numGames.setText("");
+                    numGames.setText(String.format(Locale.ENGLISH,"Games: %d", jsonRoot.getGamesArrList().size()));
                 }
-
-                else
-                {
-                    hideProgressBar();
-                    Log.d("OnSuccess", "Progress bar finished!");
-                }
-            }
-        });
+            });
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         upcomingGameViewModel.getCurrentDate().observe(this, new Observer<String>()
         {
@@ -113,6 +110,27 @@ public class TestingActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+        upcomingGameViewModel.getIsRefreshing().observe(this, new Observer<Boolean>()
+        {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean)
+            {
+                if(aBoolean)
+                {
+                   Log.d("OnSuccess", "Progress bar starting!");
+                   showProgressBar();
+                }
+
+                else
+                {
+                    hideProgressBar();
+                    Log.d("OnSuccess", "Progress bar finished!");
+                }
+            }
+        });
+
+
+
         dateNextBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -136,7 +154,7 @@ public class TestingActivity extends AppCompatActivity
             {
                 try
                 {
-                    upcomingGameViewModel.descrementDisplayDate();
+                    upcomingGameViewModel.decrementDisplayDate();
                 }
                 catch (ParseException e)
                 {
