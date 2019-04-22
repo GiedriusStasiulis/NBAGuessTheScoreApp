@@ -60,6 +60,13 @@ public class Game implements Serializable
     @Expose
     private Period period;
 
+    @SerializedName("vTeam")
+    @Expose
+    private VTeam vTeam;
+    @SerializedName("hTeam")
+    @Expose
+    private HTeam hTeam;
+
     public Game(int seasonStageId,
                 String seasonYear,
                 String gameId,
@@ -72,7 +79,9 @@ public class Game implements Serializable
                 String clock,
                 Boolean isBuzzerBeater,
                 GameDuration gameDuration,
-                Period period)
+                Period period,
+                VTeam vTeam,
+                HTeam hTeam)
     {
         this.seasonStageId = seasonStageId;
         this.seasonYear = seasonYear;
@@ -87,6 +96,8 @@ public class Game implements Serializable
         this.isBuzzerBeater = isBuzzerBeater;
         this.gameDuration = gameDuration;
         this.period = period;
+        this.vTeam = vTeam;
+        this.hTeam = hTeam;
     }
 
     public int getSeasonStageId()
@@ -217,5 +228,21 @@ public class Game implements Serializable
     public void setPeriod(Period period)
     {
         this.period = period;
+    }
+
+    public VTeam getVTeam() {
+        return vTeam;
+    }
+
+    public void setVTeam(VTeam vTeam) {
+        this.vTeam = vTeam;
+    }
+
+    public HTeam getHTeam() {
+        return hTeam;
+    }
+
+    public void setHTeam(HTeam hTeam) {
+        this.hTeam = hTeam;
     }
 }

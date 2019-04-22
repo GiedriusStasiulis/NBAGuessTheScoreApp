@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "13155035712",
+    "firebase_url": "https://nbaguessgamescoreapp.firebaseio.com",
+    "project_id": "nbaguessgamescoreapp",
+    "storage_bucket": "nbaguessgamescoreapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13155035712:android:80e7757e85f9cf98",
+        "android_client_info": {
+          "package_name": "com.example.nbaguessthescore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13155035712-hgo10pom00l0o2hp4tbve4ql5tbhn1vk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nbaguessthescore",
+            "certificate_hash": "728e16b35ae0748c3a14e93cfc10e3f10a62683e"
+          }
+        },
+        {
+          "client_id": "13155035712-o0v6nq2scmqqtb2r05iudgjj3m1nobk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3msNstzsH0f4Rtv472ax0UmRnR63zdLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13155035712-o0v6nq2scmqqtb2r05iudgjj3m1nobk5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
