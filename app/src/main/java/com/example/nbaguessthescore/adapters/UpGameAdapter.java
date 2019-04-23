@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.nbaguessthescore.R;
 import com.example.nbaguessthescore.models.Game;
-
 import java.util.ArrayList;
 
 public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder>
@@ -82,7 +81,6 @@ public class UpGameAdapter extends RecyclerView.Adapter<UpGameAdapter.ViewHolder
         }
     }
 
-    //OnClickListener interface
     public interface IUpGameOnClickListener
     {
         void onUpGameClick(int position);

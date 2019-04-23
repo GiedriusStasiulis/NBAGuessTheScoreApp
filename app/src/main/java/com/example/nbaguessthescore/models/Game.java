@@ -162,7 +162,12 @@ public class Game implements Serializable
 
     public String getStartTimeEastern()
     {
-        return startTimeEastern;
+        if(!startTimeEastern.isEmpty())
+        {
+            return startTimeEastern;
+        }
+
+        return "TDB";
     }
 
     public void setStartTimeEastern(String startTimeEastern)
