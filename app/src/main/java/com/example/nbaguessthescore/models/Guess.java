@@ -1,15 +1,20 @@
 package com.example.nbaguessthescore.models;
 
-public class Guess
+import java.io.Serializable;
+
+public class Guess implements Serializable
 {
-    public String userId, gameId, selTeam;
-    public int byPts;
+    private String userId, gameId, selTeam;
+    private int byPts;
 
     public Guess(String userId, String gameId, String selTeam, int byPts) {
         this.userId = userId;
         this.gameId = gameId;
         this.selTeam = selTeam;
         this.byPts = byPts;
+    }
+
+    public Guess() {
     }
 
     public String getUserId() {
@@ -42,15 +47,5 @@ public class Guess
 
     public void setByPts(int byPts) {
         this.byPts = byPts;
-    }
-
-    @Override
-    public String toString() {
-        return "Guess{" +
-                "userId='" + userId + '\'' +
-                ", gameId='" + gameId + '\'' +
-                ", selTeam='" + selTeam + '\'' +
-                ", byPts=" + byPts +
-                '}';
     }
 }

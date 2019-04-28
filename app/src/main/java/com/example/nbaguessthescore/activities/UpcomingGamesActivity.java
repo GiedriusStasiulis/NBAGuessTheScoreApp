@@ -71,9 +71,14 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
 
         loadingProgressBar = findViewById(R.id.progressBar);
         loadingProgressBar.setVisibility(View.GONE);
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Upcoming games");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         dateSelToolbar = findViewById(R.id.dateScrollToolbar);
         dayName = findViewById(R.id.dayNameTextView);
         selDate = findViewById(R.id.selDateTextView);
@@ -93,7 +98,6 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
             public void onChanged(@Nullable String s)
             {
                 selDate.setText(s);
-
                 getUpGames();
             }
         });
@@ -243,14 +247,16 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
         String msg;
         switch (item.getItemId())
         {
-            case R.id.refresh:
-
-                msg = "Refresh";
-                upcomingGameViewModel.refreshUpcomingGames();
-                return true;
+            case android.R.id.home:
+                finish();
+                break;
 
             case R.id.action_settings:
 
@@ -265,7 +271,6 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
             default:
                 return super.onOptionsItemSelected(item);
         }
-        Toast.makeText(this, msg + " checked", Toast.LENGTH_LONG).show();
 
         return super.onOptionsItemSelected(item);
     }

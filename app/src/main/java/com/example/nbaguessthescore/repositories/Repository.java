@@ -1,12 +1,9 @@
 package com.example.nbaguessthescore.repositories;
 
-import java.util.Date;
 
 public class Repository
 {
     private static Repository instance;
-
-    private Date startingDate;
 
     public static Repository getInstance()
     {
@@ -15,10 +12,5 @@ public class Repository
             instance = new Repository();
         }
         return instance;
-    }
-
-    public void SendGuessToWebservice()
-    {
-
     }
 }

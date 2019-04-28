@@ -59,7 +59,7 @@ public class UpcomingGamesFirestoreAdapter extends RecyclerView.Adapter<Recycler
     {
         if(holder instanceof ViewHolder)
         {
-            if(upGames.get(position).getGameStartTimeUTC().equals("TBD"))
+            if(!upGames.get(position).getGameStartTimeUTC().equals("TBD"))
             {
                 @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a");

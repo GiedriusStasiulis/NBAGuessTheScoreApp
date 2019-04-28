@@ -4,13 +4,6 @@
     tools:context="com.example.nbaguessthescore.activities.TestingActivity">
 
     <item
-        android:id="@+id/refresh"
-        android:title="Refresh"
-        android:orderInCategory="100"
-        android:icon="@drawable/reload2"
-        app:showAsAction="always"
-        />
-    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
