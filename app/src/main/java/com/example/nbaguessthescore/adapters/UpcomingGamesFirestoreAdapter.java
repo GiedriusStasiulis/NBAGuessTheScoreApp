@@ -30,15 +30,15 @@ public class UpcomingGamesFirestoreAdapter extends RecyclerView.Adapter<Recycler
     private IUpcomingGamesActivity iUpcomingGamesActivity;
     private UpcomingGamesActivity upcomingGamesActivity;
     private Context context;
-    private Context appContext;
-    private int selectedUpGameIndex;
     private Activity activity;
+    private IUpGameOnClickListener mUpGameOnClickListener;
 
-    public UpcomingGamesFirestoreAdapter(Context _context, ArrayList<UpcomingGame> _upGames, Activity _activity)
+    public UpcomingGamesFirestoreAdapter(Context _context, ArrayList<UpcomingGame> _upGames, Activity _activity, IUpGameOnClickListener _mUpGameOnClickListener)
     {
         upGames = _upGames;
         this.context = _context;
         this.activity = _activity;
+        this.mUpGameOnClickListener = _mUpGameOnClickListener;
     }
 
     @NonNull
@@ -49,9 +49,7 @@ public class UpcomingGamesFirestoreAdapter extends RecyclerView.Adapter<Recycler
         View view = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.layout_upgame_item, parent, false);
 
-        holder = new ViewHolder(view);
-
-        appContext = parent.getContext();
+        holder = new ViewHolder(view,mUpGameOnClickListener);
 
         return holder;
     }
@@ -126,9 +124,12 @@ public class UpcomingGamesFirestoreAdapter extends RecyclerView.Adapter<Recycler
         public ImageView teamA_logo;
         public ImageView teamB_logo;
 
-        public ViewHolder(View itemView)
+        IUpGameOnClickListener upGameOnClickListener;
+
+        public ViewHolder(View itemView, IUpGameOnClickListener _upGameOnClickListener)
         {
             super(itemView);
+            this.upGameOnClickListener = _upGameOnClickListener;
             teamA_triCode = itemView.findViewById(R.id.teamA_triCode);
             teamB_triCode = itemView.findViewById(R.id.teamB_triCode);
             gameStartTime = itemView.findViewById(R.id.gameStartTime);
@@ -141,8 +142,14 @@ public class UpcomingGamesFirestoreAdapter extends RecyclerView.Adapter<Recycler
 
         @Override
         public void onClick(View view) {
-            selectedUpGameIndex = getAdapterPosition();
+            int selectedUpGameIndex = getAdapterPosition();
             iUpcomingGamesActivity.onUpGameSelected(upGames.get(selectedUpGameIndex));
+
+            upGameOnClickListener.onUpGameClick(selectedUpGameIndex);
         }
+    }
+    public interface IUpGameOnClickListener
+    {
+        void onUpGameClick(int position);
     }
 }

@@ -3,26 +3,17 @@ package com.example.nbaguessthescore.viewmodels;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
-
-import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.repositories.GameRepository;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
-public class UpcomingGameViewModel extends ViewModel
+public class UpcomingGamesActivityViewModel extends ViewModel
 {
     private GameRepository gameRepo;
 

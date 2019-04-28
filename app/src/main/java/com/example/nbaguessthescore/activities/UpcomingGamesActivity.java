@@ -2,6 +2,7 @@ package com.example.nbaguessthescore.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.nbaguessthescore.R;
 import com.example.nbaguessthescore.adapters.UpcomingGamesFirestoreAdapter;
+import com.example.nbaguessthescore.detail_activities.GuessActivity;
 import com.example.nbaguessthescore.models.UpcomingGame;
-import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
+import com.example.nbaguessthescore.viewmodels.UpcomingGamesActivityViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -37,7 +40,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomingGamesActivity, SwipeRefreshLayout.OnRefreshListener
+public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomingGamesActivity, SwipeRefreshLayout.OnRefreshListener, UpcomingGamesFirestoreAdapter.IUpGameOnClickListener
 {
     private static final String TAG = "UpcomingGamesActivity";
 
@@ -50,14 +53,12 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
     public Button dateBackBtn;
     public ProgressBar loadingProgressBar;
     public Animation loadingAnimation;
-
     public RecyclerView recyclerView;
-    //private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private View mParentLayout;
+
     private ArrayList<UpcomingGame> upGames = new ArrayList<>();
 
-    public UpcomingGameViewModel upcomingGameViewModel;
+    public UpcomingGamesActivityViewModel upcomingGameViewModel;
     private UpcomingGamesFirestoreAdapter upcomingGamesFirestoreAdapter;
     private DocumentSnapshot mLastQueriedDocument;
 
@@ -81,7 +82,7 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
         dateNextBtn = findViewById(R.id.selDateForward);
         dateBackBtn = findViewById(R.id.selDateBackwards);
 
-        upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
+        upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGamesActivityViewModel.class);
 
         initRecyclerView();
 
@@ -183,7 +184,7 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
     private void initRecyclerView()
     {
         if(upcomingGamesFirestoreAdapter == null){
-            upcomingGamesFirestoreAdapter = new UpcomingGamesFirestoreAdapter(this, upGames, UpcomingGamesActivity.this);
+            upcomingGamesFirestoreAdapter = new UpcomingGamesFirestoreAdapter(this, upGames, UpcomingGamesActivity.this, this);
         }
 
         recyclerView = findViewById(R.id.upGamesRecyclerView);
@@ -246,8 +247,6 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
         getMenuInflater().inflate(R.menu.menu_main,menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -318,5 +317,15 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
     private void makeSnackBarMessage(String message)
     {
         Snackbar.make(mParentLayout, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUpGameClick(int position)
+    {
+        Log.d(TAG, "onUpGameClick: clicked");
+
+        Intent intentToGuessAct = new Intent(this, GuessActivity.class);
+        intentToGuessAct.putExtra("UpcomingGame", upGames.get(position));
+        startActivity(intentToGuessAct);
     }
 }
