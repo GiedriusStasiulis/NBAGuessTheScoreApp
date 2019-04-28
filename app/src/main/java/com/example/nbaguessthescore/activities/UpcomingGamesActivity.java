@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.nbaguessthescore.R;
 import com.example.nbaguessthescore.adapters.UpcomingGamesFirestoreAdapter;
-import com.example.nbaguessthescore.detail_activities.GuessActivity;
+import com.example.nbaguessthescore.detail_activities.GuessDetailActivity;
 import com.example.nbaguessthescore.models.UpcomingGame;
 import com.example.nbaguessthescore.viewmodels.UpcomingGamesActivityViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,7 +35,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -86,14 +85,7 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
 
         initRecyclerView();
 
-        try
-        {
-            upcomingGameViewModel.init();
-        }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
+        upcomingGameViewModel.init();
 
         upcomingGameViewModel.getCurrentDate().observe(this, new Observer<String>()
         {
@@ -324,7 +316,7 @@ public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomin
     {
         Log.d(TAG, "onUpGameClick: clicked");
 
-        Intent intentToGuessAct = new Intent(this, GuessActivity.class);
+        Intent intentToGuessAct = new Intent(this, GuessDetailActivity.class);
         intentToGuessAct.putExtra("UpcomingGame", upGames.get(position));
         startActivity(intentToGuessAct);
     }

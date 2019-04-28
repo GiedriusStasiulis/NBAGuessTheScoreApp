@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".detail_activities.GuessActivity" />
+        <activity android:name=".detail_activities.GuessDetailActivity" />
     </application>
 
 </manifest>

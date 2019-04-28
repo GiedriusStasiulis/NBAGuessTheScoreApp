@@ -6,8 +6,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
 import android.text.format.DateUtils;
-import com.example.nbaguessthescore.models.JSONRoot;
-import com.example.nbaguessthescore.repositories.GameRepository;
+
+import com.example.nbaguessthescore.repositories.Repository;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,9 +15,7 @@ import java.util.Date;
 
 public class UpcomingGamesActivityViewModel extends ViewModel
 {
-    private GameRepository gameRepo;
-
-    private LiveData<JSONRoot> upGameJsonRoot;
+    private Repository repo;
 
     private MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
     private MutableLiveData<String> displayDate = new MutableLiveData<>();
@@ -25,26 +23,16 @@ public class UpcomingGamesActivityViewModel extends ViewModel
     private MutableLiveData<Boolean> isDateToday = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDateTomorrow = new MutableLiveData<>();
 
-    public void init() throws ParseException
+    public void init()
     {
+        /*
         if(upGameJsonRoot != null)
         {
             return;
-        }
-        gameRepo = GameRepository.getInstance();
-        getCurrentDate();
-        upGameJsonRoot = gameRepo.getGamesFromRepo(1,getBaseUrl());
-    }
+        }*/
 
-    public LiveData<JSONRoot> getUpcomingGames() throws ParseException
-    {
-        if(upGameJsonRoot == null)
-        {
-            gameRepo = GameRepository.getInstance();
-            getCurrentDate();
-            upGameJsonRoot = gameRepo.getGamesFromRepo(1,getBaseUrl());
-        }
-        return upGameJsonRoot;
+        repo = Repository.getInstance();
+        getCurrentDate();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -62,8 +50,6 @@ public class UpcomingGamesActivityViewModel extends ViewModel
             protected void onPostExecute(Void aVoid)
             {
                 super.onPostExecute(aVoid);
-                gameRepo = GameRepository.getInstance();
-                //jsonRoot = gameRepo.getNumberOfUpcomingGames();
                 isRefreshing.postValue(false);
             }
 
@@ -133,8 +119,6 @@ public class UpcomingGamesActivityViewModel extends ViewModel
         return isDateTomorrow;
     }
 
-
-
     public MutableLiveData<String> setDateDayName() throws ParseException
     {
         String dayName = "";
@@ -175,8 +159,6 @@ public class UpcomingGamesActivityViewModel extends ViewModel
         String fDate = sdf.format(newDate);
         displayDate.setValue(fDate);
 
-        gameRepo.getGamesFromRepo(1,getBaseUrl());
-
         setDateDayName();
     }
 
@@ -191,8 +173,6 @@ public class UpcomingGamesActivityViewModel extends ViewModel
         Date newDate = cal.getTime();
         String fDate = sdf.format(newDate);
         displayDate.setValue(fDate);
-
-        gameRepo.getGamesFromRepo(1,getBaseUrl());
 
         setDateDayName();
     }
