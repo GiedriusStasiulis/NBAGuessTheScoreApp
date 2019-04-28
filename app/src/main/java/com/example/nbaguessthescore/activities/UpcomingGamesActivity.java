@@ -2,14 +2,15 @@ package com.example.nbaguessthescore.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,59 +20,60 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.nbaguessthescore.R;
-import com.example.nbaguessthescore.adapters.UpGameAdapter;
-import com.example.nbaguessthescore.detail_activities.GuessActivity;
-import com.example.nbaguessthescore.models.Game;
-import com.example.nbaguessthescore.models.JSONRoot;
+import com.example.nbaguessthescore.adapters.UpcomingGamesFirestoreAdapter;
+import com.example.nbaguessthescore.models.UpcomingGame;
 import com.example.nbaguessthescore.viewmodels.UpcomingGameViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 
-public class TestingActivity extends AppCompatActivity implements UpGameAdapter.IUpGameOnClickListener
+public class UpcomingGamesActivity extends AppCompatActivity implements IUpcomingGamesActivity, SwipeRefreshLayout.OnRefreshListener
 {
-    private static final String TAG = "TestingActivity";
+    private static final String TAG = "UpcomingGamesActivity";
 
-    private Toolbar toolbar;
-    private Toolbar dateSelToolbar;
-    private ProgressBar prBar;
-    private Animation animation;
-    private TextView dayName;
-    private TextView selDate;
-    private TextView numGames;
-    private Button dateNextBtn;
-    private Button dateBackBtn;
+    public Toolbar toolbar;
+    public Toolbar dateSelToolbar;
+    public TextView dayName;
+    public TextView selDate;
+    public TextView numGames;
+    public Button dateNextBtn;
+    public Button dateBackBtn;
+    public ProgressBar loadingProgressBar;
+    public Animation loadingAnimation;
 
-    private RecyclerView upGameRView;
-    private RecyclerView.Adapter upGameAdapter;
+    public RecyclerView recyclerView;
+    //private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private UpcomingGameViewModel upcomingGameViewModel;
+    private View mParentLayout;
+    private ArrayList<UpcomingGame> upGames = new ArrayList<>();
 
-    private JSONRoot jRoot = new JSONRoot();
-
-   // private DatabaseReference dbReference;
-  //  private FirebaseRecyclerOptions<UpcomingGame> options;
-  //  private FirebaseRecyclerAdapter<UpcomingGame, UpcomingGameViewHolder> upcomingGameAdapter;
-
-    ArrayList<Game> games = new ArrayList<>();
+    public UpcomingGameViewModel upcomingGameViewModel;
+    private UpcomingGamesFirestoreAdapter upcomingGamesFirestoreAdapter;
+    private DocumentSnapshot mLastQueriedDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_testing);
+        setContentView(R.layout.activity_upcoming_games);
 
-        prBar = findViewById(R.id.progressBar);
-        prBar.setVisibility(View.GONE);
+        mParentLayout = findViewById(android.R.id.content);
 
+        loadingProgressBar = findViewById(R.id.progressBar);
+        loadingProgressBar.setVisibility(View.GONE);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Upcoming games");
-
         dateSelToolbar = findViewById(R.id.dateScrollToolbar);
         dayName = findViewById(R.id.dayNameTextView);
         selDate = findViewById(R.id.selDateTextView);
@@ -79,38 +81,13 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
         dateNextBtn = findViewById(R.id.selDateForward);
         dateBackBtn = findViewById(R.id.selDateBackwards);
 
-
-
         upcomingGameViewModel = ViewModelProviders.of(this).get(UpcomingGameViewModel.class);
+
+        initRecyclerView();
 
         try
         {
             upcomingGameViewModel.init();
-        }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
-
-        try
-        {
-            upcomingGameViewModel.getUpcomingGames().observe(this, new Observer<JSONRoot>()
-            {
-                @Override
-                public void onChanged(@Nullable JSONRoot jsonRoot)
-                {
-                    assert jsonRoot != null;
-                    jRoot = jsonRoot;
-                    numGames.clearComposingText();
-                    numGames.setText(String.format(Locale.ENGLISH,"Games: %d", jRoot.getGamesArrList().size()));
-
-                    games.clear();
-                    games.addAll(jsonRoot.getGamesArrList());
-
-                    upGameAdapter.notifyDataSetChanged();
-
-                }
-            });
         }
         catch (ParseException e)
         {
@@ -123,6 +100,8 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
             public void onChanged(@Nullable String s)
             {
                 selDate.setText(s);
+
+                getUpGames();
             }
         });
 
@@ -141,25 +120,6 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
             e.printStackTrace();
         }
 
-        upcomingGameViewModel.getIsRefreshing().observe(this, new Observer<Boolean>()
-        {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean)
-            {
-                if(aBoolean)
-                {
-                   Log.d("OnSuccess", "Progress bar starting!");
-                   showProgressBar();
-                }
-
-                else
-                {
-                    hideProgressBar();
-                    Log.d("OnSuccess", "Progress bar finished!");
-                }
-            }
-        });
-
         dateNextBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -168,6 +128,7 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
                 try
                 {
                     upcomingGameViewModel.incrementDisplayDate();
+                    makeSnackBarMessage("Next date btn pressed!");
                 }
                 catch (ParseException e)
                 {
@@ -184,6 +145,7 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
                 try
                 {
                     upcomingGameViewModel.decrementDisplayDate();
+                    makeSnackBarMessage("Back date btn pressed!");
                 }
                 catch (ParseException e)
                 {
@@ -216,34 +178,67 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
         {
             e.printStackTrace();
         }
-
-        upGameRView = findViewById(R.id.upGameRv);
-        upGameRView.hasFixedSize();
-        upGameRView.setLayoutManager(new LinearLayoutManager(this));
-
-       /* dbReference = FirebaseDatabase.getInstance().getReference().child("upcomingGames");
-
-        options = new FirebaseRecyclerOptions.Builder<UpcomingGame>().setQuery(dbReference,UpcomingGame.class).build();
-
-        upcomingGameAdapter = new FirebaseRecyclerAdapter<UpcomingGame, UpcomingGameViewHolder>(options)
-        {
-            @Override
-            protected void onBindViewHolder(UpcomingGameViewHolder holder, int position, UpcomingGame model) {
-
-            }
-
-            @NonNull
-            @Override
-            public UpcomingGameViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                return null;
-            }
-        };
-
-        upGameAdapter = new UpGameAdapter(games,this);
-        upGameRView.setAdapter(upGameAdapter);
-        */
     }
 
+    private void initRecyclerView()
+    {
+        if(upcomingGamesFirestoreAdapter == null){
+            upcomingGamesFirestoreAdapter = new UpcomingGamesFirestoreAdapter(this, upGames, UpcomingGamesActivity.this);
+        }
+
+        recyclerView = findViewById(R.id.upGamesRecyclerView);
+        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(upcomingGamesFirestoreAdapter);
+    }
+
+    private void getUpGames()
+    {
+        upGames.clear();
+
+        FirebaseFirestore dbReference = FirebaseFirestore.getInstance();
+        CollectionReference notesCollectionRef = dbReference.collection("allGames");
+
+        Query upGamesQuery = null;
+
+        if(mLastQueriedDocument != null)
+        {
+            upGamesQuery = notesCollectionRef
+                    .whereEqualTo("StatusNum",1)
+                    .whereEqualTo("GameDateUTC",selDate.getText().toString())
+                    .orderBy("OrderNo",Query.Direction.ASCENDING)
+                    .startAfter(mLastQueriedDocument);
+        }
+        else
+            {
+            upGamesQuery = notesCollectionRef
+                    .whereEqualTo("StatusNum",1)
+                    .whereEqualTo("GameDateUTC",selDate.getText().toString())
+                    .orderBy("OrderNo",Query.Direction.ASCENDING);
+        }
+
+        upGamesQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task)
+            {
+                if(task.isSuccessful())
+                {
+                    for(QueryDocumentSnapshot document: task.getResult())
+                    {
+                        UpcomingGame upGame = document.toObject(UpcomingGame.class);
+                        upGames.add(upGame);
+                    }
+
+                    upcomingGamesFirestoreAdapter.notifyDataSetChanged();
+                }
+
+                else{
+                    makeSnackBarMessage("Query Failed. Check Logs.");
+                }
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -251,6 +246,8 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
         getMenuInflater().inflate(R.menu.menu_main,menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -284,30 +281,42 @@ public class TestingActivity extends AppCompatActivity implements UpGameAdapter.
 
     private void showProgressBar()
     {
-        prBar.setVisibility(View.VISIBLE);
+        loadingProgressBar.setVisibility(View.VISIBLE);
 
-        animation = new RotateAnimation(0.0f, 360.0f,
+        loadingAnimation = new RotateAnimation(0.0f, 360.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
                 0.5f);
-        animation.setRepeatCount(-20);
-        animation.setDuration(2000);
+        loadingAnimation.setRepeatCount(-20);
+        loadingAnimation.setDuration(2000);
 
-        ((ProgressBar)findViewById(R.id.progressBar)).setAnimation(animation);
+        (findViewById(R.id.progressBar)).setAnimation(loadingAnimation);
     }
 
     private void hideProgressBar()
     {
-        prBar.setVisibility(View.GONE);
-        ((ProgressBar)findViewById(R.id.progressBar)).clearAnimation();
+        loadingProgressBar.setVisibility(View.GONE);
+        (findViewById(R.id.progressBar)).clearAnimation();
     }
 
     @Override
-    public void onUpGameClick(int position)
+    protected void onResume()
     {
-        Log.d(TAG, "onUpGameClick: clicked");
+        super.onResume();
+    }
 
-        Intent intentToGuessAct = new Intent(this, GuessActivity.class);
-        intentToGuessAct.putExtra("GameID", games.get(position).getGameId());
-        startActivity(intentToGuessAct);
+    @Override
+    public void onRefresh() {
+
+    }
+
+    @Override
+    public void onUpGameSelected(UpcomingGame upGame)
+    {
+
+    }
+
+    private void makeSnackBarMessage(String message)
+    {
+        Snackbar.make(mParentLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 }

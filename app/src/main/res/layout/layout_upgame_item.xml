@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:paddingTop="10dp"
             android:orientation="horizontal"
             android:weightSum="9">
 
@@ -31,9 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:scaleY="1.2"
-                android:scaleX="1.2"
-                android:src="@drawable/ic_was"/>
+                android:scaleY="1"
+                android:scaleX="1"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -68,9 +68,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:scaleY="1.2"
-                android:scaleX="1.2"
-                android:src="@drawable/ic_was"/>
+                android:scaleY="1"
+                android:scaleX="1"/>
 
         </LinearLayout>
         <LinearLayout
@@ -85,9 +84,9 @@
                 android:id="@+id/teamA_triCode"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:paddingLeft="6dp"
                 android:layout_weight="3"
-                android:text="DEN"
+                android:paddingRight="2dp"
+                android:text="HTeam"
                 android:textColor="#000000"
                 android:textAlignment="center"
                 android:textSize="20dp"
@@ -97,7 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:text="02:30"
+                android:text="StartTime"
                 android:textColor="#000000"
                 android:textAlignment="center"
                 android:textSize="20dp"/>
@@ -105,9 +104,9 @@
                 android:id="@+id/teamB_triCode"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:paddingRight="2dp"
                 android:layout_weight="3"
-                android:text="LAL"
+                android:paddingLeft="2dp"
+                android:text="VTeam"
                 android:textColor="#000000"
                 android:textAlignment="center"
                 android:textSize="20dp"

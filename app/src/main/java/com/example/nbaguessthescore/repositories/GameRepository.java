@@ -1,5 +1,6 @@
 package com.example.nbaguessthescore.repositories;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
@@ -7,7 +8,12 @@ import com.example.nbaguessthescore.models.Game;
 import com.example.nbaguessthescore.models.JSONRoot;
 import com.example.nbaguessthescore.webclient.IRetrofitWebClient;
 import com.example.nbaguessthescore.webclient.RetrofitWebClient;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -24,6 +30,8 @@ public class GameRepository
     private ArrayList<Game> allGamesArrList = new ArrayList<>();
     private ArrayList<Game> upcomingGamesArrList = new ArrayList<>();
 
+    private Date startingDate;
+
     public static GameRepository getInstance()
     {
         if(instance == null)
@@ -33,8 +41,7 @@ public class GameRepository
         return instance;
     }
 
-    public MutableLiveData<JSONRoot> getGamesFromRepo(final int statusNum, String baseUrl)
-    {
+    public MutableLiveData<JSONRoot> getGamesFromRepo(final int statusNum, String baseUrl) throws ParseException {
         IRetrofitWebClient rfClient = RetrofitWebClient.getRetrofitClient().create(IRetrofitWebClient.class);
 
         switch(statusNum)
@@ -80,6 +87,15 @@ public class GameRepository
             //Live games
             case 2:
 
+                setStartingDate();
+                while(startingDate.before(getSeasonEndDate()))
+                {
+                    incrementDateByOne(startingDate);
+                }
+            {
+
+            }
+
                 break;
 
             //Finished games
@@ -91,5 +107,34 @@ public class GameRepository
                     break;
         }
         return upGameJsonData;
+    }
+
+    public void setStartingDate() throws ParseException
+    {
+        Date date = Calendar.getInstance().getTime();
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String fDate = sdf.format(date);
+        startingDate = sdf.parse(fDate);
+    }
+
+    public Date getSeasonEndDate() throws ParseException
+    {
+        String seasonEndDateStr = "20190701";
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date seasonEndDate = sdf.parse(seasonEndDateStr);
+        return seasonEndDate;
+    }
+
+    public void incrementDateByOne(Date startDate) throws ParseException
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        cal.add(Calendar.DATE, 1);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date newDate = cal.getTime();
+        String fDate = sdf.format(newDate);
+        startingDate = sdf.parse(fDate);
     }
 }
